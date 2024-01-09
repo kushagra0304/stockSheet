@@ -11,6 +11,11 @@ const puppeteer = require('puppeteer');
 const saveShipmentToDB = async (body, session) => {
     const dispatchToSave = body.dispatch
 
+    // the sold field is for indexing and sparsing
+    dispatchToSave = dispatchToSave.map((reel) => {
+        reel.sold = false;
+    });
+
     const shipmentToSave = {
         millName: body.millName,
         billDate: (new Date(body.billDate)).getTime(),
