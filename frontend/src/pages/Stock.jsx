@@ -1,27 +1,36 @@
 import { useEffect, useState } from "react";
 import * as stockService from "../services/stock"
+import Reels from "../components/Reels";
+import { useNavigate } from 'react-router-dom'
+import 'purecss/build/forms.css'
+import 'purecss/build/tables.css'
+import '../styles/stockPage.css'
+import SelectedReelGroups from "../components/SelectedReelGroups";
 
 const FilterInput = ({ name, value, setFilter }) => {
+    const navigate = useNavigate()
     const [checked, setChecked] = useState(false);
 
     return (
-        <label>
-            <span>{value}:</span>
-            <input type="radio" name={name} onClick={(event) => {
-                setChecked(value => !value);
-                event.target.checked = !checked
-                setFilter(name, value)
-            }}/>
-            <span> </span>
-        </label>
+        <>
+            <label className="pure-radio">
+                <span>{value}: </span>
+                <input type="radio" name={name} onClick={(event) => {
+                    setChecked(value => !value);
+                    event.target.checked = !checked
+                    setFilter(name, value)
+                }}/>
+            </label>
+        </>
+        
     )
 }
 
 const Filter = ({ name, values, setFilter }) => {
     return (
         <fieldset>
-            <legend>{name}</legend>
-            <div>
+            <legend>{name.toUpperCase() }</legend>
+            <div style={{ display: 'flex', gap: "12px"}}>
                 {values.map((value) => {
                     return <FilterInput name={name} value={value} setFilter={setFilter}/>
                 })}
@@ -30,38 +39,12 @@ const Filter = ({ name, values, setFilter }) => {
     )
 }
 
-const Reels = ({ reels }) => {
-    return (
-        <table>
-            <thead>
-                <tr>
-                    <th>Size</th>
-                    <th>GSM</th>
-                    <th>BF</th>
-                    <th>Shade</th>
-                </tr>
-            </thead>
-            <tbody>
-                {reels ? reels.map((reel) => {
-                    return (
-                        <tr>
-                            <td>{reel.size}</td>
-                            <td>{reel.gsm}</td>
-                            <td>{reel.bf}</td>
-                            <td>{reel.shade}</td>
-                        </tr>
-                    )
-                }) : <></>}
-            </tbody>
-        </table>
-    )
-}
-
 const Stock = () => {
     const [stock, setStock] = useState();
     // I haved defined the object below only for documentation.
     const [filtersValues, setFiltersValues] = useState({ gsm: new Set(), size: new Set(), bf: new Set(), shade: new Set() });
     const [filters, setFilters] = useState({ gsm: '', size: '', bf: '', shade: '' });
+    const [selectedReelGroups, setSelectedReelGroups] = useState([]);
 
     const handleFiltersValues = (reels) => {
         const gsmSet = new Set();
@@ -103,21 +86,34 @@ const Stock = () => {
     }, []);
 
     return (
-        <div style={{margin: '12px'}}>
-            <div>
+        <div style={{padding: '12px'}}>
+            <form className="pure-form">
                 {Object.entries(filtersValues).map(([key, set]) => {
                     return <Filter name={key} values={Array.from(set)} setFilter={handleFilters} />
                 })}
+            </form>
+
+            <div style={{ marginBottom: '18px' }}>
+                <h2 style={{ fontSize: '18px' }}>Stock</h2>
+                <div style={{ overflowX: 'scroll' }}>
+                    <Reels 
+                        selectedReelGroups={selectedReelGroups} 
+                        setSelectedReelGroups={setSelectedReelGroups} 
+                        reels={Object.entries(filters).reduce((filteredReels, [key, value]) => {
+                            if(value === ''){
+                                return filteredReels;
+                            }
+
+                            return filteredReels.filter((reel) => reel[`${key}`] === value);
+                    }, stock)}/>
+                </div>
             </div>
 
             <div>
-                <Reels reels={Object.entries(filters).reduce((filteredReels, [key, value]) => {
-                    if(value === ''){
-                        return filteredReels;
-                    }
-
-                    return filteredReels.filter((reel) => reel[`${key}`] === value);
-                }, stock)}/>
+                <h2 style={{ fontSize: '18px' }}>Selected Reels</h2>
+                <div style={{ overflowX: 'scroll', backgroundColor: '#e0e0e0' }}>
+                    <SelectedReelGroups selectedReelGroups={selectedReelGroups} setSelectedReelGroups={setSelectedReelGroups}/>
+                </div>
             </div>
         </div>
     );
