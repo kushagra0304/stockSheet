@@ -4,11 +4,13 @@ import Reels from "../components/Reels";
 import { useNavigate } from 'react-router-dom'
 import 'purecss/build/forms.css'
 import 'purecss/build/tables.css'
+import 'purecss/build/buttons.css'
 import '../styles/stockPage.css'
 import SelectedReelGroups from "../components/SelectedReelGroups";
+import { useSelector } from "react-redux";
+
 
 const FilterInput = ({ name, value, setFilter }) => {
-    const navigate = useNavigate()
     const [checked, setChecked] = useState(false);
 
     return (
@@ -40,11 +42,12 @@ const Filter = ({ name, values, setFilter }) => {
 }
 
 const Stock = () => {
+    const navigate = useNavigate()
     const [stock, setStock] = useState();
     // I haved defined the object below only for documentation.
     const [filtersValues, setFiltersValues] = useState({ gsm: new Set(), size: new Set(), bf: new Set(), shade: new Set() });
     const [filters, setFilters] = useState({ gsm: '', size: '', bf: '', shade: '' });
-    const [selectedReelGroups, setSelectedReelGroups] = useState([]);
+    const selectedReelGroups = useSelector(state => state.selectedReelGroups);
 
     const handleFiltersValues = (reels) => {
         const gsmSet = new Set();
@@ -93,12 +96,10 @@ const Stock = () => {
                 })}
             </form>
 
-            <div style={{ marginBottom: '18px' }}>
+            <div>
                 <h2 style={{ fontSize: '18px' }}>Stock</h2>
                 <div style={{ overflowX: 'scroll' }}>
                     <Reels 
-                        selectedReelGroups={selectedReelGroups} 
-                        setSelectedReelGroups={setSelectedReelGroups} 
                         reels={Object.entries(filters).reduce((filteredReels, [key, value]) => {
                             if(value === ''){
                                 return filteredReels;
@@ -112,7 +113,17 @@ const Stock = () => {
             <div>
                 <h2 style={{ fontSize: '18px' }}>Selected Reels</h2>
                 <div style={{ overflowX: 'scroll', backgroundColor: '#e0e0e0' }}>
-                    <SelectedReelGroups selectedReelGroups={selectedReelGroups} setSelectedReelGroups={setSelectedReelGroups}/>
+                    <SelectedReelGroups/>
+                </div>
+                <div style={{ display: "flex", justifyContent: "end" }}>
+                    <button 
+                        id="createOrderButton" 
+                        className="pure-button" 
+                        disabled={selectedReelGroups.length === 0 ? true : false}
+                        onClick={() => {
+
+                        }}
+                    >Create Order</button>
                 </div>
             </div>
         </div>

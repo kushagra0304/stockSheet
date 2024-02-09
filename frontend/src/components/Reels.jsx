@@ -1,4 +1,5 @@
-import { useState } from "react";
+import { useDispatch, useSelector } from "react-redux";
+import { addReelGroup, removeReelGroup } from "../reducers/selectedReelGroupsReducer";
 
 const groupReels = (reels, properties) => {
     const grouped = {};
@@ -16,33 +17,39 @@ const groupReels = (reels, properties) => {
     return Object.values(grouped);
 }
 
-const Reels = ({ reels, selectedReelGroups, setSelectedReelGroups }) => {
+const Reels = ({ reels }) => {
+    const dispatch = useDispatch();
+    const selectedReelGroups = useSelector(state => state.selectedReelGroups);
+
     const selectReelGroup = (reelGroup, event) => {
         if(event.target.parentElement.classList.contains('selectedReelGroupTH')) {            
             event.target.parentElement.classList.remove('selectedReelGroupTH');
 
-            const reelGroupSignature = `${reelGroup[0]['gsm']}${reelGroup[0]['bf']}${reelGroup[0]['size']}${reelGroup[0]['shade']}`;
+            dispatch(removeReelGroup({ reelGroup }));
 
-            setSelectedReelGroups(selectedReelGroups => {
-                return selectedReelGroups.filter((selectedReelGroup) => {
-                    const selectedReelGroupSignature = `${selectedReelGroup[0]['gsm']}${selectedReelGroup[0]['bf']}${selectedReelGroup[0]['size']}${selectedReelGroup[0]['shade']}`;
+            // const reelGroupSignature = `${reelGroup[0]['gsm']}${reelGroup[0]['bf']}${reelGroup[0]['size']}${reelGroup[0]['shade']}`;
 
-                    if(selectedReelGroupSignature === reelGroupSignature) {
-                        return false;
-                    }
+            // setSelectedReelGroups(selectedReelGroups => {
+            //     return selectedReelGroups.filter((selectedReelGroup) => {
+            //         const selectedReelGroupSignature = `${selectedReelGroup[0]['gsm']}${selectedReelGroup[0]['bf']}${selectedReelGroup[0]['size']}${selectedReelGroup[0]['shade']}`;
 
-                    return true;
-                });
-            });
+            //         if(selectedReelGroupSignature === reelGroupSignature) {
+            //             return false;
+            //         }
+
+            //         return true;
+            //     });
+            // });
         } else {
             event.target.parentElement.classList.add('selectedReelGroupTH');
-            setSelectedReelGroups(selectedReelGroups => [reelGroup, ...selectedReelGroups]);
+            dispatch(addReelGroup({ reelGroup }));
+            // setSelectedReelGroups(selectedReelGroups => [reelGroup, ...selectedReelGroups]);
         }
     }
 
     const setCSSIfReelGroupIsSelected = (toSetReelGroup) => {
         let bool = false;
-        const toSetReelGroupSignature =  `${toSetReelGroup[0]['gsm']}${toSetReelGroup[0]['bf']}${toSetReelGroup[0]['size']}${toSetReelGroup[0]['shade']}`;
+        const toSetReelGroupSignature = `${toSetReelGroup[0]['gsm']}${toSetReelGroup[0]['bf']}${toSetReelGroup[0]['size']}${toSetReelGroup[0]['shade']}`;
 
         selectedReelGroups.forEach((selectedReelGroup) => {
             const selectedReelGroupSignature = `${selectedReelGroup[0]['gsm']}${selectedReelGroup[0]['bf']}${selectedReelGroup[0]['size']}${selectedReelGroup[0]['shade']}`;

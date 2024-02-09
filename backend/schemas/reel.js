@@ -21,6 +21,7 @@ const reelSchema = new mongoose.Schema({
      },
     soldTo: { type: String },
     soldDate: { type: Date },
+    soldRate: { type: Number }
     // ----------------------------
 });
 

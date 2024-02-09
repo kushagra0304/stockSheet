@@ -1,6 +1,8 @@
-import { useEffect, useState } from "react";
+import { useSelector } from "react-redux";
 
-const SelectedReelGroups = ({ selectedReelGroups, setSelectedReelGroups}) => {
+const SelectedReelGroups = () => {
+    const selectedReelGroups = useSelector(state => state.selectedReelGroups);
+
     return (
         <>
             <table id="selectedReelGroupsTable" className='pure-table pure-table-bordered'>
