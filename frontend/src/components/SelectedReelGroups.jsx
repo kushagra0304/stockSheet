@@ -1,7 +1,9 @@
-import { useSelector } from "react-redux";
+import { useDispatch, useSelector } from "react-redux";
+import { removeReelGroup } from "../reducers/selectedReelGroupsReducer";
 
 const SelectedReelGroups = () => {
     const selectedReelGroups = useSelector(state => state.selectedReelGroups);
+    const dispatch = useDispatch();
 
     return (
         <>
@@ -19,7 +21,7 @@ const SelectedReelGroups = () => {
                 <tbody>
                     {selectedReelGroups ? selectedReelGroups.map((reelGroup, index) => {
                         return (
-                            <tr className='selectedReelGroupTH'>
+                            <tr className='selectedReelGroupTH' onClick={() => dispatch(removeReelGroup({ reelGroup }))}>
                                 <td>{index+1}</td>
                                 <td>{reelGroup[0].size}</td>
                                 <td>{reelGroup[0].gsm}</td>

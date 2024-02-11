@@ -1,0 +1,57 @@
+#createOrder {
+    padding: 12px;
+}
+
+/* Details table */
+
+#createOrder .detailsTable {
+    margin-bottom: 1em;
+}
+
+/* Rate table */
+
+#createOrder .rateTable {
+    margin-bottom: 1em;
+}
+
+#createOrder .rateTable td {
+    display: flex;
+}
+
+#createOrder .rateTable input {
+    width: 3.1em;
+}
+
+#createOrder .rateTable button {
+    width: 3em;
+    margin-left: 1em;
+}
+
+/* Quantity table */
+
+#createOrder .qtyTable td {
+    display: flex;
+}
+
+#createOrder .qtyTable input {
+    width: 3.1em;
+}
+
+#createOrder .qtyTable button {
+    width: 3em;
+    margin-left: 1em;
+}
+
+/* --------- */
+
+#createOrder input::-webkit-outer-spin-button,
+#createOrder input::-webkit-inner-spin-button {
+  -webkit-appearance: none;
+  margin: 0;
+}
+
+
+#createOrder #createOrderConfirmButton {
+    margin-top: 1em;
+    background-color: cornflowerblue;
+}

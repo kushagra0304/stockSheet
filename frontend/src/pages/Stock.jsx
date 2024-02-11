@@ -1,13 +1,13 @@
 import { useEffect, useState } from "react";
 import * as stockService from "../services/stock"
 import Reels from "../components/Reels";
-import { useNavigate } from 'react-router-dom'
 import 'purecss/build/forms.css'
 import 'purecss/build/tables.css'
 import 'purecss/build/buttons.css'
 import '../styles/stockPage.css'
 import SelectedReelGroups from "../components/SelectedReelGroups";
 import { useSelector } from "react-redux";
+import { useNavigate } from "react-router";
 
 
 const FilterInput = ({ name, value, setFilter }) => {
@@ -42,12 +42,12 @@ const Filter = ({ name, values, setFilter }) => {
 }
 
 const Stock = () => {
-    const navigate = useNavigate()
     const [stock, setStock] = useState();
     // I haved defined the object below only for documentation.
     const [filtersValues, setFiltersValues] = useState({ gsm: new Set(), size: new Set(), bf: new Set(), shade: new Set() });
     const [filters, setFilters] = useState({ gsm: '', size: '', bf: '', shade: '' });
     const selectedReelGroups = useSelector(state => state.selectedReelGroups);
+    const navigate = useNavigate();
 
     const handleFiltersValues = (reels) => {
         const gsmSet = new Set();
@@ -120,9 +120,7 @@ const Stock = () => {
                         id="createOrderButton" 
                         className="pure-button" 
                         disabled={selectedReelGroups.length === 0 ? true : false}
-                        onClick={() => {
-
-                        }}
+                        onClick={() => navigate("/createOrder")}
                     >Create Order</button>
                 </div>
             </div>

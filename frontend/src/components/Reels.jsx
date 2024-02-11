@@ -26,24 +26,9 @@ const Reels = ({ reels }) => {
             event.target.parentElement.classList.remove('selectedReelGroupTH');
 
             dispatch(removeReelGroup({ reelGroup }));
-
-            // const reelGroupSignature = `${reelGroup[0]['gsm']}${reelGroup[0]['bf']}${reelGroup[0]['size']}${reelGroup[0]['shade']}`;
-
-            // setSelectedReelGroups(selectedReelGroups => {
-            //     return selectedReelGroups.filter((selectedReelGroup) => {
-            //         const selectedReelGroupSignature = `${selectedReelGroup[0]['gsm']}${selectedReelGroup[0]['bf']}${selectedReelGroup[0]['size']}${selectedReelGroup[0]['shade']}`;
-
-            //         if(selectedReelGroupSignature === reelGroupSignature) {
-            //             return false;
-            //         }
-
-            //         return true;
-            //     });
-            // });
         } else {
             event.target.parentElement.classList.add('selectedReelGroupTH');
             dispatch(addReelGroup({ reelGroup }));
-            // setSelectedReelGroups(selectedReelGroups => [reelGroup, ...selectedReelGroups]);
         }
     }
 
