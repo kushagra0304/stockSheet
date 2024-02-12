@@ -11,6 +11,7 @@ const { default: mongoose } = require('mongoose');
 const config = require('./utils/config');
 const dispatchRouter = require('./controllers/dispatch')
 const stockRouter = require('./controllers/stock');
+const orderRouter = require('./controllers/order');
 const middlewares = require('./utils/middlewares');
 
 // ---------------------------------------------------------
@@ -46,6 +47,7 @@ if (config.NODE_ENV === 'development') {
 
 app.use('/api/dispatch', dispatchRouter);
 app.use('/api/stock', stockRouter);
+app.use('/api/order', orderRouter);
 // ----------------------------
 app.use(middlewares.unknownEndpoint);
 app.use(middlewares.errorHandler); // this has to be the last loaded middleware.

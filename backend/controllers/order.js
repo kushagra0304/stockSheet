@@ -1,4 +1,3 @@
-const { default: mongoose } = require('mongoose');
 const orderModel = require('../schemas/order');
 const router = require('express').Router();
 
@@ -11,6 +10,8 @@ router.post('/createOrder', async (request, response) => {
             orderReelGroups: body.orderReelGroups,
             active: true,
         });
+
+        console.log(createdOrder);
 
         return response.send(createdOrder);
     } catch(e) {

@@ -2,6 +2,8 @@ import { useSelector } from "react-redux";
 import { Navigate } from "react-router";
 import "../styles/pages/createOrder.css"
 import { useCallback, useEffect, useState } from "react";
+import { createOrder } from "../services/order";
+import ReactSearchBox from "react-search-box";
 
 const RateTable = ({ setRateInOrderReelGroup, index }) => {
     const [rate, setRate] = useState(30.00);
@@ -49,8 +51,8 @@ const QtyTable = ({ stock, setQtyInOrderReelGroup, index }) => {
                     <tr>
                         <td>
                             <input inputMode="numeric" step="1" type="number" readOnly value={qty} onChange={(event) => setQty(event.target.value)}/>
-                            <button onClick={() => setQty(rate => ((rate - 1) < 1) ? rate : (rate - 1))}>&lt;</button>
-                            <button onClick={() => setQty(rate => ((rate + 1) > stock) ? rate : (rate+1))}>&gt;</button>
+                            <button onClick={() => ((qty - 1) < 1) ? {} : setQty(rate => (rate - 1))}>&lt;</button>
+                            <button onClick={() => ((qty + 1) > stock) ? {} : setQty(rate => (rate + 1))}>&gt;</button>
                         </td>
                     </tr>
                 </tbody>
@@ -74,11 +76,13 @@ const initOrderReelGroups = (selectedReelGroup) => {
 
 const CreateOrder = () => {
     const selectedReelGroups = useSelector(state => state.selectedReelGroups);
-    const [orderReelGroups, setOrderReelGroups] = useState(initOrderReelGroups(selectedReelGroups)) 
 
-    useEffect(() => {
-        console.log(orderReelGroups);
-    }, [orderReelGroups])
+    const [orderReelGroups, setOrderReelGroups] = useState(initOrderReelGroups(selectedReelGroups)) 
+    const [companies, setCompanies] = useState([
+        {key: 'Deoria', value: 'Deoria'},
+        {key: 'Devrishi', value: 'Devrishi'},
+    ]);
+    const [orderCompany, setOrderCompany] = useState("");
 
     const setRateInOrderReelGroup = useCallback((rate, index) => setOrderReelGroups(state => {
         state[index].rate = rate;
@@ -90,6 +94,22 @@ const CreateOrder = () => {
         return structuredClone(state);
     }), [])
 
+    const handleCreateOrder = async () => {
+        if(!companies.find((company) => company === orderCompany)){
+            // Implement error handling
+            return;
+        }
+
+        const createOrderReq = await createOrder({
+            customerName: orderCompany,
+            orderReelGroups: orderReelGroups
+        });
+
+        const createdOrder = createOrderReq.data
+
+        console.log(createdOrder);
+    }
+
     if(selectedReelGroups.length === 0) {
         return (<Navigate to={"/"}></Navigate>)
     }
@@ -97,7 +117,10 @@ const CreateOrder = () => {
     return (
         <>
             <div id="createOrder">
-                <div style={{ overflow: "auto" }}>
+                <div id="orderCustomerName">
+                    <ReactSearchBox type="text" onSelect={(record) => setOrderCompany(record.item)}  placeholder="Company" data={companies}/>
+                </div>
+                <div id="orderReelGroups" style={{ overflow: "auto" }}>
                     <table id="selectedReelGroupsTable" className='pure-table pure-table-bordered'>
                         <thead>
                             <tr>
@@ -144,6 +167,7 @@ const CreateOrder = () => {
                     <button 
                         id="createOrderConfirmButton" 
                         className="pure-button" 
+                        onClick={handleCreateOrder}
                     >confirm</button>
                 </div>
             </div>

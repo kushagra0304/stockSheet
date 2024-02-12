@@ -2,6 +2,20 @@
     padding: 12px;
 }
 
+/* Search bar */
+
+#createOrder #orderCustomerName {
+    position: relative;
+    z-index: 2;
+    margin-bottom: 1em;
+    height: 40px;
+}
+
+#createOrder #orderReelGroups {
+    position: relative;
+    z-index: 1;
+}
+
 /* Details table */
 
 #createOrder .detailsTable {
