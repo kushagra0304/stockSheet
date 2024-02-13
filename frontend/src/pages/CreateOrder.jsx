@@ -4,6 +4,7 @@ import "../styles/pages/createOrder.css"
 import { useCallback, useEffect, useState } from "react";
 import { createOrder } from "../services/order";
 import ReactSearchBox from "react-search-box";
+import { getAllCompanies } from "../services/company";
 
 const RateTable = ({ setRateInOrderReelGroup, index }) => {
     const [rate, setRate] = useState(30.00);
@@ -78,11 +79,17 @@ const CreateOrder = () => {
     const selectedReelGroups = useSelector(state => state.selectedReelGroups);
 
     const [orderReelGroups, setOrderReelGroups] = useState(initOrderReelGroups(selectedReelGroups)) 
-    const [companies, setCompanies] = useState([
-        {key: 'Deoria', value: 'Deoria'},
-        {key: 'Devrishi', value: 'Devrishi'},
-    ]);
+    const [companies, setCompanies] = useState([]);
     const [orderCompany, setOrderCompany] = useState("");
+
+    useEffect(() => {
+        getAllCompanies().then(({ data }) => {
+            setCompanies(data.map((company) => ({
+                value: company.name,
+                key: company.name
+            })))
+        })
+    }, [])
 
     const setRateInOrderReelGroup = useCallback((rate, index) => setOrderReelGroups(state => {
         state[index].rate = rate;
@@ -106,8 +113,6 @@ const CreateOrder = () => {
         });
 
         const createdOrder = createOrderReq.data
-
-        console.log(createdOrder);
     }
 
     if(selectedReelGroups.length === 0) {
