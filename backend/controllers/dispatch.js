@@ -9,11 +9,6 @@ var fs = require('fs');
 const puppeteer = require('puppeteer');
 
 const saveShipmentToDB = async (body, session) => {
-    // the sold field is for indexing and sparsing
-    body.dispatch.forEach((reel) => {
-        reel.sold = false;
-    });
-
     const dispatchToSave = body.dispatch
 
     const shipmentToSave = {

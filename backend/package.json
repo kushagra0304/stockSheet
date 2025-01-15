@@ -4,8 +4,9 @@
   "description": "This npm project is a express backend for stocksheet application",
   "main": "index.js",
   "scripts": {
-    "start": "nodemon index.js",
+    "start": "node index.js",
     "dev": "NODE_ENV=development nodemon index.js",
+    "build-frontend": "cd .. && cd frontend && npm run build && mv build ../backend ",
     "test": "echo \"Error: no test specified\" && exit 1"
   },
   "author": "Kushagra Agarwal",
@@ -16,10 +17,11 @@
     "cross-env": "^7.0.3",
     "dotenv": "^16.3.1",
     "express": "^4.18.2",
+    "express-async-errors": "^3.1.1",
     "jsbarcode": "^3.11.6",
     "mongoose": "^8.0.3",
     "nunjucks": "^3.2.4",
-    "puppeteer": "^21.7.0"
+    "puppeteer": "^24.0.0"
   },
   "devDependencies": {
     "eslint": "^8.56.0",

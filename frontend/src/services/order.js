@@ -9,7 +9,25 @@ if(process.env.NODE_ENV === 'development'){
 
 export const createOrder = async (order) => {
     try {
-        return await axios.post(`http://${domain}/api/order/createOrder`, order);
+        return await axios.post(`http://${domain}/api/order`, order);
+    } catch (error) {
+        console.log(error);
+        console.log("Error connecting to server")
+    }
+}
+
+export const getOrders = async (orderType) => {
+    try {
+        return await axios.get(`http://${domain}/api/order/${orderType}`);
+    } catch (error) {
+        console.log(error);
+        console.log("Error connecting to server")
+    }
+}
+
+export const deleteOrder = async (orderId) => {
+    try {
+        return await axios.delete(`http://${domain}/api/order/${orderId}`);
     } catch (error) {
         console.log(error);
         console.log("Error connecting to server")

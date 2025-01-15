@@ -15,7 +15,7 @@ const orderSchema = new mongoose.Schema({
     customerName: { type: String, required: true },
     orderReelGroups: [{ type: orderReelGroup, required: true }],
     date: { type: Date, default: Date.now, required: true },
-    active: { type: Boolean, index: true, sparse: true}
+    active: { type: Boolean, index: true, sparse: true }
 });
 
 orderSchema.set('toJSON', {

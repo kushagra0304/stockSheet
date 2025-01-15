@@ -14,10 +14,10 @@ const selectedReelGroupsSlice = createSlice({
     removeReelGroup(state, action) {
         const { reelGroup } = action.payload;
 
-        const reelGroupSignature = `${reelGroup[0]['gsm']}${reelGroup[0]['bf']}${reelGroup[0]['size']}${reelGroup[0]['shade']}`;
+        const reelGroupSignature = `${reelGroup['gsm']}${reelGroup['bf']}${reelGroup['size']}${reelGroup['shade']}`;
 
         return state.filter((selectedReelGroup) => {
-            const selectedReelGroupSignature = `${selectedReelGroup[0]['gsm']}${selectedReelGroup[0]['bf']}${selectedReelGroup[0]['size']}${selectedReelGroup[0]['shade']}`;
+            const selectedReelGroupSignature = `${selectedReelGroup['gsm']}${selectedReelGroup['bf']}${selectedReelGroup['size']}${selectedReelGroup['shade']}`;
 
             if(selectedReelGroupSignature === reelGroupSignature) {
                 return false;
@@ -25,10 +25,13 @@ const selectedReelGroupsSlice = createSlice({
 
             return true;
         });
+    },
+    clearReelGroups(state, action) {
+      return [];
     }
   },
 });
 
-export const { addReelGroup, removeReelGroup  } = selectedReelGroupsSlice.actions;
+export const { addReelGroup, removeReelGroup, clearReelGroups  } = selectedReelGroupsSlice.actions;
 
 export default selectedReelGroupsSlice.reducer;

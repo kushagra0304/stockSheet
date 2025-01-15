@@ -14,10 +14,10 @@ const groupReels = (reels, properties) => {
         grouped[key].push(item);
     });
 
-    return Object.values(grouped);
+    return grouped;
 }
 
-const Reels = ({ reels }) => {
+const Reels = ({ reelGroups }) => {
     const dispatch = useDispatch();
     const selectedReelGroups = useSelector(state => state.selectedReelGroups);
 
@@ -34,10 +34,10 @@ const Reels = ({ reels }) => {
 
     const setCSSIfReelGroupIsSelected = (toSetReelGroup) => {
         let bool = false;
-        const toSetReelGroupSignature = `${toSetReelGroup[0]['gsm']}${toSetReelGroup[0]['bf']}${toSetReelGroup[0]['size']}${toSetReelGroup[0]['shade']}`;
+        const toSetReelGroupSignature = `${toSetReelGroup['gsm']}${toSetReelGroup['bf']}${toSetReelGroup['size']}${toSetReelGroup['shade']}`;
 
         selectedReelGroups.forEach((selectedReelGroup) => {
-            const selectedReelGroupSignature = `${selectedReelGroup[0]['gsm']}${selectedReelGroup[0]['bf']}${selectedReelGroup[0]['size']}${selectedReelGroup[0]['shade']}`;
+            const selectedReelGroupSignature = `${selectedReelGroup['gsm']}${selectedReelGroup['bf']}${selectedReelGroup['size']}${selectedReelGroup['shade']}`;
 
             if(toSetReelGroupSignature === selectedReelGroupSignature){
                 bool = true;
@@ -64,15 +64,15 @@ const Reels = ({ reels }) => {
                 </tr>
             </thead>
             <tbody>
-                {reels ? groupReels(reels, ['gsm', 'size', 'shade', 'bf']).map((reelGroup, index) => {
+                {reelGroups ? reelGroups.map((reelGroup, index) => {
                     return (
                         <tr className={`${setCSSIfReelGroupIsSelected(reelGroup)}`} onClick={(event) => selectReelGroup(reelGroup, event)}>
                             <td>{index+1}</td>
-                            <td>{reelGroup[0].size}</td>
-                            <td>{reelGroup[0].gsm}</td>
-                            <td>{reelGroup[0].bf}</td>
-                            <td>{reelGroup[0].shade}</td>
-                            <td>{reelGroup.length}</td>
+                            <td>{reelGroup.size}</td>
+                            <td>{reelGroup.gsm}</td>
+                            <td>{reelGroup.bf}</td>
+                            <td>{reelGroup.shade}</td>
+                            <td>{reelGroup.qty}</td>
                         </tr>
                     )
                 }) : <></>}

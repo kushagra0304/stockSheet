@@ -1,0 +1,32 @@
+#orders {
+    padding: 6px;
+}
+
+#orders #ordersDisplay > * + *{
+    margin-top: 6px;
+}
+
+.order {
+    border-radius: 6px;
+    background-color: whitesmoke;
+    padding: 6px;
+}
+
+.order details {
+    overflow: scroll;
+    
+}
+
+.order summary {
+    list-style: none;
+}
+
+.order summary h2 {
+    display: inline-block;
+    margin: 0;
+    margin-bottom: 6px;
+}
+
+.order table {
+    margin-left: 6px;
+}

@@ -1,28 +1,48 @@
 import 'purecss/build/buttons.css'
+import { Outlet, useNavigate } from 'react-router';
+import { getOrders } from '../services/order';
 
-const Navbar = (props) => {
+const Navbar = () => {
+    const navigate = useNavigate();
+
     return (
-        <>
+        <div style={{
+            display: 'flex',
+            flexDirection: 'column',
+            height: "100vh"
+        }}>
             <div style={{
                 backgroundColor: '#E6E6E6', 
-                height: '48px',
+                flexBasis: '48px',
                 boxShadow: 'rgba(0, 0, 0, 0.24) 0px 3px 8px'
                 }}>    
             </div>
-            {props.children}
-            <div style={{ 
-                position: 'absolute', 
-                top: '100%', 
-                left: '50%', 
-                transform: 'translate(-50%, -100%)',
-                display: 'flex',
-                width: '100%',
-                height: '48px'
-                }}>
-                    <button class="pure-button" style={{flexGrow: '1', border: '1px solid black'}} href="#">Stock</button>
-                    <button class="pure-button" style={{flexGrow: '1', border: '1px solid black'}} href="#">Orders</button>
+            <div style={{
+                flexGrow: 1,
+                overflow: "scroll"
+            }}>
+                <Outlet/>
             </div>
-        </>
+            <div style={{ 
+                width: '100%',
+                minHeight: '48px',
+                display: "flex",
+                boxShadow: "0px -3px 10px 0px rgba(0,0,0,0.2),0px 10px 15px -3px rgba(0,0,0,0.1)"
+                }}>
+                    <button style={{
+                        flexGrow: 1,
+                        backgroundColor: 'white',
+                        border: 'none'
+                    }} onClick={() => { 
+                        navigate("/")
+                    }}>Stock</button>
+                    <button style={{
+                        flexGrow: 1,
+                        backgroundColor: 'white',
+                        border: 'none'
+                    }} onClick={() => navigate("/orders")}>Orders</button>
+            </div>
+        </div>
     )
 }
 

@@ -4,6 +4,8 @@
 const express = require('express');
 const cors = require('cors');
 const { default: mongoose } = require('mongoose');
+const path = require('path');
+require('express-async-errors');
 
 // ---------------------------------------------------------
 // My imports 
@@ -38,14 +40,16 @@ mongoose.connect(url).then(() => {
 // ---------------------------------------------------------
 // Middleware list
 
-app.use(cors());
+if (config.NODE_ENV !== 'development') {
+  app.use(express.static(path.join(__dirname + '/build')));
+}
 app.use(express.json());
 if (config.NODE_ENV === 'development') {
     app.use(require('./utils/middlewares').morganRequestLogger);
+    app.use(cors());
 }
 // ----------------------------
 // Controllers
-
 app.use('/api/dispatch', dispatchRouter);
 app.use('/api/stock', stockRouter);
 app.use('/api/order', orderRouter);

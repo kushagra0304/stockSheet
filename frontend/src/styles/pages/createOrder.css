@@ -69,3 +69,8 @@
     margin-top: 1em;
     background-color: cornflowerblue;
 }
+
+#createOrder #createOrderCancelButton {
+    margin-top: 1em;
+    background-color:orangered;
+}

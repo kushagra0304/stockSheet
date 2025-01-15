@@ -12,13 +12,14 @@ const reelSchema = new mongoose.Schema({
     reelNo: { type: String, required: true },
     rate: { type: Number, required: true },
     date: { type: Date, required: true, default: Date.now },
+    status: { 
+      type: String,
+      enum: ['sold', 'active'],
+      index: true,
+      sparse: true
+   },
     // ----------------------------
     // Sold fields
-    sold: { 
-        type: Boolean,
-        index: true,
-        sparse: true
-     },
     soldTo: { type: String },
     soldDate: { type: Date },
     soldRate: { type: Number }

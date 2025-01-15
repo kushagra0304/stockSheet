@@ -1,0 +1,16 @@
+POST http://localhost:3001/api/company/add HTTP/2
+Content-Type: application/json
+
+{
+    "name": "deoria",
+    "gstin": "746rftyvgkhj4rftyv"
+}
+
+###
+POST http://localhost:3001/api/order/addReel HTTP/2
+Content-Type: application/json
+
+{
+    "orderId": "678646bae7e7943b8efaa858",
+    "reelId": "677cf419cb5008bc52e17045"
+}

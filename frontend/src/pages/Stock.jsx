@@ -6,9 +6,9 @@ import 'purecss/build/tables.css'
 import 'purecss/build/buttons.css'
 import '../styles/stockPage.css'
 import SelectedReelGroups from "../components/SelectedReelGroups";
-import { useSelector } from "react-redux";
+import { useDispatch, useSelector } from "react-redux";
 import { useNavigate } from "react-router";
-
+import { clearReelGroups } from "../reducers/selectedReelGroupsReducer";
 
 const FilterInput = ({ name, value, setFilter }) => {
     const [checked, setChecked] = useState(false);
@@ -42,24 +42,25 @@ const Filter = ({ name, values, setFilter }) => {
 }
 
 const Stock = () => {
-    const [stock, setStock] = useState();
+    const [reelGroups, setReelGroups] = useState();
     // I haved defined the object below only for documentation.
     const [filtersValues, setFiltersValues] = useState({ gsm: new Set(), size: new Set(), bf: new Set(), shade: new Set() });
     const [filters, setFilters] = useState({ gsm: '', size: '', bf: '', shade: '' });
     const selectedReelGroups = useSelector(state => state.selectedReelGroups);
     const navigate = useNavigate();
+    const dispatch = useDispatch();
 
-    const handleFiltersValues = (reels) => {
+    const handleFiltersValues = (reelGroups) => {
         const gsmSet = new Set();
         const sizeSet = new Set();
         const bfSet = new Set();
         const shadeSet = new Set();
 
-        reels.forEach(reel => {
-            gsmSet.add(reel.gsm);
-            sizeSet.add(reel.size);
-            bfSet.add(reel.bf);
-            shadeSet.add(reel.shade);
+        reelGroups.forEach(reelGroup => {
+            gsmSet.add(reelGroup.gsm);
+            sizeSet.add(reelGroup.size);
+            bfSet.add(reelGroup.bf);
+            shadeSet.add(reelGroup.shade);
         });
 
         return {
@@ -81,12 +82,18 @@ const Stock = () => {
     }
 
     useEffect(() => {
-        stockService.getStock().then((res) => {
-            const stock = res.data;
-            setFiltersValues(handleFiltersValues(stock));
-            setStock(res.data);
+        dispatch(clearReelGroups());
+
+        stockService.getStockAsReelGroup().then(async (res) => {  
+            const reelGroups = res.data;       
+            setFiltersValues(handleFiltersValues(reelGroups));
+            setReelGroups(reelGroups);
         });
     }, []);
+
+    useEffect(() => {
+        console.log(filters);
+    }, [filters])
 
     return (
         <div style={{padding: '12px'}}>
@@ -100,13 +107,13 @@ const Stock = () => {
                 <h2 style={{ fontSize: '18px' }}>Stock</h2>
                 <div style={{ overflowX: 'scroll' }}>
                     <Reels 
-                        reels={Object.entries(filters).reduce((filteredReels, [key, value]) => {
+                        reelGroups={Object.entries(filters).reduce((filteredReelGroups, [key, value]) => {
                             if(value === ''){
-                                return filteredReels;
+                                return filteredReelGroups;
                             }
 
-                            return filteredReels.filter((reel) => reel[`${key}`] === value);
-                    }, stock)}/>
+                            return filteredReelGroups.filter((reelGroup) => reelGroup[`${key}`] === value);
+                    }, reelGroups)}/>
                 </div>
             </div>
 

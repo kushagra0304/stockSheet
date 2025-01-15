@@ -23,11 +23,11 @@ const SelectedReelGroups = () => {
                         return (
                             <tr className='selectedReelGroupTH' onClick={() => dispatch(removeReelGroup({ reelGroup }))}>
                                 <td>{index+1}</td>
-                                <td>{reelGroup[0].size}</td>
-                                <td>{reelGroup[0].gsm}</td>
-                                <td>{reelGroup[0].bf}</td>
-                                <td>{reelGroup[0].shade}</td>
-                                <td>{reelGroup.length}</td>
+                                <td>{reelGroup.size}</td>
+                                <td>{reelGroup.gsm}</td>
+                                <td>{reelGroup.bf}</td>
+                                <td>{reelGroup.shade}</td>
+                                <td>{reelGroup.qty}</td>
                             </tr>
                         )
                     }) : <></>}

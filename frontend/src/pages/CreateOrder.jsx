@@ -1,5 +1,5 @@
 import { useSelector } from "react-redux";
-import { Navigate } from "react-router";
+import { Navigate, useNavigate } from "react-router";
 import "../styles/pages/createOrder.css"
 import { useCallback, useEffect, useState } from "react";
 import { createOrder } from "../services/order";
@@ -23,7 +23,7 @@ const RateTable = ({ setRateInOrderReelGroup, index }) => {
             <tbody>
                 <tr>
                     <td>
-                        <input inputMode="numeric" step="0.25" type="number" value={rate} onChange={(event) => setRate(event.target.value)}/>
+                        <input inputMode="numeric" type="number" value={rate} onChange={(event) => setRate(Number(event.target.value))}/>
                         <button onClick={() => setRate(rate => rate - 0.25)}>&lt;</button>
                         <button onClick={() => setRate(rate => rate + 0.25)}>&gt;</button>
                     </td>
@@ -65,10 +65,10 @@ const QtyTable = ({ stock, setQtyInOrderReelGroup, index }) => {
 const initOrderReelGroups = (selectedReelGroup) => {
     return selectedReelGroup.map((orderReelGroup) => {
         return {
-            gsm: orderReelGroup[0].gsm,
-            size: orderReelGroup[0].size,
-            shade: orderReelGroup[0].shade,
-            bf: orderReelGroup[0].bf,
+            gsm: orderReelGroup.gsm,
+            size: orderReelGroup.size,
+            shade: orderReelGroup.shade,
+            bf: orderReelGroup.bf,
             qty: 1,
             rate: 30,
         }
@@ -77,6 +77,7 @@ const initOrderReelGroups = (selectedReelGroup) => {
 
 const CreateOrder = () => {
     const selectedReelGroups = useSelector(state => state.selectedReelGroups);
+    const navigate = useNavigate();
 
     const [orderReelGroups, setOrderReelGroups] = useState(initOrderReelGroups(selectedReelGroups)) 
     const [companies, setCompanies] = useState([]);
@@ -102,7 +103,7 @@ const CreateOrder = () => {
     }), [])
 
     const handleCreateOrder = async () => {
-        if(!companies.find((company) => company === orderCompany)){
+        if(!companies.find((company) => company.value === orderCompany)){
             // Implement error handling
             return;
         }
@@ -112,7 +113,13 @@ const CreateOrder = () => {
             orderReelGroups: orderReelGroups
         });
 
-        const createdOrder = createOrderReq.data
+        if(createOrderReq.status === 200) {
+            navigate('/orders')
+        }
+    }
+
+    const handleCancelCreateOrder = () => {
+        navigate("/");
     }
 
     if(selectedReelGroups.length === 0) {
@@ -123,7 +130,7 @@ const CreateOrder = () => {
         <>
             <div id="createOrder">
                 <div id="orderCustomerName">
-                    <ReactSearchBox type="text" onSelect={(record) => setOrderCompany(record.item)}  placeholder="Company" data={companies}/>
+                    <ReactSearchBox type="text" onSelect={(record) => setOrderCompany(record.item.value)}  placeholder="Company" data={companies}/>
                 </div>
                 <div id="orderReelGroups" style={{ overflow: "auto" }}>
                     <table id="selectedReelGroupsTable" className='pure-table pure-table-bordered'>
@@ -151,16 +158,16 @@ const CreateOrder = () => {
                                                 </thead>
                                                 <tbody>
                                                     <tr>
-                                                        <td>{reelGroup[0].size}</td>
-                                                        <td>{reelGroup[0].gsm}</td>
-                                                        <td>{reelGroup[0].bf}</td>
-                                                        <td>{reelGroup[0].shade}</td>
-                                                        <td>{reelGroup.length}</td>
+                                                        <td>{reelGroup.size}</td>
+                                                        <td>{reelGroup.gsm}</td>
+                                                        <td>{reelGroup.bf}</td>
+                                                        <td>{reelGroup.shade}</td>
+                                                        <td>{reelGroup.qty}</td>
                                                     </tr>
                                                 </tbody>
                                             </table>
                                             <RateTable setRateInOrderReelGroup={setRateInOrderReelGroup} index={index} />
-                                            <QtyTable stock={reelGroup.length} setQtyInOrderReelGroup={setQtyInOrderReelGroup} index={index}/>
+                                            <QtyTable stock={reelGroup.qty} setQtyInOrderReelGroup={setQtyInOrderReelGroup} index={index}/>
                                         </td>
                                     </tr>
                                 )
@@ -168,7 +175,12 @@ const CreateOrder = () => {
                         </tbody>
                     </table>
                 </div>
-                <div style={{ display: "flex", justifyContent: "end" }}>
+                <div style={{ display: "flex", justifyContent: "space-between" }}>
+                    <button 
+                        id="createOrderCancelButton" 
+                        className="pure-button" 
+                        onClick={handleCancelCreateOrder}
+                    >cancel</button>
                     <button 
                         id="createOrderConfirmButton" 
                         className="pure-button" 
