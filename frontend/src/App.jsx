@@ -1,8 +1,8 @@
 import './App.css';
-import Navbar from './components/Navbar';
-import CreateOrder from './pages/CreateOrder';
-import Dispatch from './pages/Dispatch';
-import Stock from './pages/Stock';
+import Navbar from './components/Navbar.jsx';
+import CreateOrder from './pages/CreateOrder.jsx';
+import Dispatch from './pages/Dispatch.jsx';
+import Stock from './pages/Stock.jsx';
 import 'purecss/build/base.css'
 import { Route, Routes } from 'react-router-dom'
 import Order from './pages/Order.jsx';

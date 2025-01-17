@@ -6,7 +6,7 @@
   "scripts": {
     "start": "node index.js",
     "dev": "NODE_ENV=development nodemon index.js",
-    "build-frontend": "cd .. && cd frontend && npm run build && mv build ../backend ",
+    "build-frontend": "cd .. && cd frontend && npm run build && rm -rf ../backend/build && mv build ../backend",
     "test": "echo \"Error: no test specified\" && exit 1"
   },
   "author": "Kushagra Agarwal",
