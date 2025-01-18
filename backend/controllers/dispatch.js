@@ -2,11 +2,11 @@ const { default: mongoose } = require('mongoose');
 const reelModel = require('../schemas/reel');
 const shipmentModel = require('../schemas/shipment');
 const router = require('express').Router();
-const JsBarcode = require('jsbarcode');
 const { Canvas } = require("canvas");
 const njk = require('nunjucks')
-var fs = require('fs');
 const puppeteer = require('puppeteer');
+var fs = require('fs');
+const QRCode = require('qrcode')
 
 const saveShipmentToDB = async (body, session) => {
     const dispatchToSave = body.dispatch
@@ -30,17 +30,16 @@ const saveShipmentToDB = async (body, session) => {
     return shipmentSaved[0];
 }
 
-const convertDispatchIdsToBarcodes = (dispatch) => {
-    return dispatch.map((reel) => {
-        const canvas = new Canvas();
-        JsBarcode(canvas, reel._id, { 
-            height: 50, 
-            width: 2,
-            text: `${reel.size}/${reel.gsm} | Weight: ${reel.weight}kg | Reel No: ${reel.reelNo}`,
-        });
-        return canvas.toDataURL()
-    })
-}
+const convertDispatchIdsToBarcodes = async (dispatch) => {
+    return Promise.all(
+        dispatch.map(async (reel) => {
+            return {
+                qrcode: await QRCode.toDataURL(reel.id, { width: 340 }),
+                text: `${reel.size}/${reel.gsm} | Weight: ${reel.weight}kg | Reel No: ${reel.reelNo}`
+            };
+        })
+    );
+};
 
 const createHTMLPageFromBarcodes = (barcodes) => {
     njk.configure('template', { autoescape: true });
@@ -57,7 +56,7 @@ const convertPageToPdf = async (htmlPage) => {
 
     await browser.close();
 
-    return pdfBuffer;
+    return Buffer.from(pdfBuffer);
 }
 
 const sendPdf = (pdf, res) => {
@@ -77,7 +76,7 @@ router.post(`/upload`, async (request, response) => {
         await session.withTransaction(async () => {
             const shipment = await saveShipmentToDB(body, session);
 
-            const barcodes = convertDispatchIdsToBarcodes(shipment.dispatch)
+            const barcodes = await convertDispatchIdsToBarcodes(shipment.dispatch)
 
             const page = createHTMLPageFromBarcodes(barcodes);
 

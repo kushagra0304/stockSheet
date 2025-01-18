@@ -18,6 +18,8 @@
 
             body {
                 display: flex;
+                flex-direction: column;
+                align-items: center;
                 flex-wrap: wrap;
             }
 
@@ -26,23 +28,16 @@
                 width: fit-content;
             }
 
-            div {
-                border: 1px dashed black;   
-                padding: 0 8px;
-            }
-
-            p {
-                font-size: 1.5rem;
-                text-align: center;
+            .cutLine {
+                width: 100%;
+                border: 1px dashed black;                
             }
         </style>
     </head>
     <body>
         {% for barcode in barcodes %}
-            <div>
-                <img src="{{barcode.qrcode}}" alt="">
-                <p>{{barcode.text}}</p>
-            </div>
+            <img src="{{barcode}}" alt="">
+            <div class="cutLine"></div>
         {% endfor %}
     </body>
 </html>

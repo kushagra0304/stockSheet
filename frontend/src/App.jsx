@@ -6,6 +6,7 @@ import Stock from './pages/Stock.jsx';
 import 'purecss/build/base.css'
 import { Route, Routes } from 'react-router-dom'
 import Order from './pages/Order.jsx';
+import Manager from './pages/manager/Manager.jsx';
 
 function App() {
   return (
@@ -17,7 +18,7 @@ function App() {
           <Route path='orders' element={<Order/>} />
         </Route>
         <Route path="/createOrder" element={<CreateOrder/>}/>
-        <Route path="/manager" element={<></>}/>
+        <Route path="/manager" element={<Manager/>}/>
       </Routes>
     </>
   )

@@ -1,0 +1,15 @@
+#orders {
+    padding: 6px;
+}
+
+.order {
+    border-radius: 6px;
+    background-color: whitesmoke;
+    padding: 6px;
+}
+
+.order h2 {
+    display: inline-block;
+    margin: 0;
+    margin-bottom: 6px;
+}
