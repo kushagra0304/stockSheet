@@ -1,6 +1,5 @@
 import 'purecss/build/buttons.css'
 import { Outlet, useNavigate } from 'react-router';
-import { getOrders } from '../services/order';
 
 const Navbar = () => {
     const navigate = useNavigate();

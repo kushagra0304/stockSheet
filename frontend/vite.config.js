@@ -9,6 +9,10 @@ export default defineConfig({
     },
   },
   server: {
+    https: {
+      key: './localhost+3-key.pem', // Path to your private key
+      cert: './localhost+3.pem', // Path to your certificate
+    },
     port: 3000,
     proxy: {
       '/api': {

@@ -31,6 +31,8 @@ dist-ssr
 
 # Miscellaneous
 .DS_Store
+localhost+3-key.pem
+localhost+3.pem
 
 # Editor directories and files
 .vscode/*

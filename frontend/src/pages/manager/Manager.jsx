@@ -2,6 +2,7 @@ import { useEffect } from "react";
 import { useState } from "react";
 import { getOrders } from "../../services/order";
 import '../../styles/pages/manager/manager.css';
+import { useNavigate } from "react-router";
 
 const OrderComponent = ({ order }) => {
     const createReelDS = () => {
@@ -40,6 +41,7 @@ const OrderComponent = ({ order }) => {
 };
 const Manager = () => {
     const [orders, setOrders] = useState([]);
+    const navigate = useNavigate();
 
     useEffect(() => {
         getOrders('active').then((orders) => {
@@ -47,10 +49,14 @@ const Manager = () => {
         });
     }, []); 
 
+    const handleNavigate = () => {
+        navigate('./order/id');
+    };
+
     return (
         <div id="orders"> 
             <div id="ordersDisplay">
-                {orders.map((order) => <OrderComponent order={order}/>)}
+                {orders.map((order) => <div onClick={handleNavigate}><OrderComponent order={order}/></div>)}
             </div>
         </div>
     )

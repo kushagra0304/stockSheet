@@ -2,10 +2,8 @@ const { default: mongoose } = require('mongoose');
 const reelModel = require('../schemas/reel');
 const shipmentModel = require('../schemas/shipment');
 const router = require('express').Router();
-const { Canvas } = require("canvas");
 const njk = require('nunjucks')
 const puppeteer = require('puppeteer');
-var fs = require('fs');
 const QRCode = require('qrcode')
 
 const saveShipmentToDB = async (body, session) => {
