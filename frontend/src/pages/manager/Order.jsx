@@ -1,100 +1,123 @@
-import { useEffect, useRef, useState } from "react";
+import { useCallback, useEffect, useRef, useState } from "react";
 import { useParams } from "react-router";
+import OrderDisplay from "../../components/OrderDisplay";
+import { addReelToOrder, getOrder } from "../../services/order";
+
+const getStream = async () => {
+    return await navigator.mediaDevices.getUserMedia({
+        video: true
+        // video: {
+        //     facingMode: { exact: "environment" },
+        // },                   
+    });
+}
+
+const barcodeDetector = new BarcodeDetector({ formats: ['qr_code'] });
+
+
+const useBarcodeScanner = (videoRef) => {
+    const intervalIdRef = useRef(null);
+    const [barcode, setBarcode] = useState(null);
+
+    const startScanning = useCallback(() => {
+        if (intervalIdRef.current) return;
+
+        intervalIdRef.current = setInterval(async () => {
+            if (videoRef.current && barcodeDetector) {
+                const barcodes = await barcodeDetector.detect(videoRef.current);
+                if (barcodes.length > 0) {
+                    setBarcode(barcodes[0].rawValue);
+                }
+            }
+        }, 1000);
+    }, [videoRef]);
+
+    const stopScanning = useCallback(() => {
+        if (intervalIdRef.current) {
+            clearInterval(intervalIdRef.current);
+            intervalIdRef.current = null;
+        }
+    }, []);
+
+    useEffect(() => {
+        return () => stopScanning(); // Cleanup on unmount
+    }, [stopScanning]);
+
+    return { startScanning, stopScanning, barcode };
+};
 
 const Order = () => {
     const { orderId } = useParams();
-    const videoRef = useRef(null); // Reference for the video element
-    const [scannedCode, setScannedCode] = useState(null);
-    const [currentDeviceId, setCurrentDeviceId] = useState(null); // Store the current camera's device ID
-    const [availableDevices, setAvailableDevices] = useState([]); // List of available video input devices
+    const [order, setOrder] = useState(null);
+    const videoRef = useRef();
+    const [stream, setStream] = useState();
+    const { startScanning, stopScanning, barcode } = useBarcodeScanner(videoRef);
 
-    const startCamera = async (deviceId) => {
-        try {
-            // Get the media stream for the selected camera
-            const stream = await navigator.mediaDevices.getUserMedia({
-                video: deviceId ? { deviceId: { exact: deviceId } } : true,
-            });
-            videoRef.current.srcObject = stream;
+    const startCamera = useCallback(async () => {
+        const stream = await getStream();
+        setStream(stream);
 
-            // Use Barcode Detection API to scan QR codes
-            const barcodeDetector = new BarcodeDetector({ formats: ['qr_code'] });
+        videoRef.current.srcObject = stream;
 
-            const scanQRCode = () => {
-                barcodeDetector
-                    .detect(videoRef.current)
-                    .then((barcodes) => {
-                        if (barcodes.length > 0) {
-                            setScannedCode(barcodes[0].rawValue);
-                        }
-                    })
-                    .catch((err) => {
-                        console.error("Barcode detection failed:", err);
-                    });
+        startScanning();
+    }, [startScanning])
 
-                requestAnimationFrame(scanQRCode); // Continue scanning
-            };
+    const stopCamera = useCallback(() => {
+        if (stream) {
+            stream.getTracks().forEach(track => track.stop());
 
-            requestAnimationFrame(scanQRCode);
-        } catch (err) {
-            console.error("Camera access failed:", err);
-        }
+            videoRef.current.srcObject = null;
+
+            stopScanning();
+        }  
+    }, [stopScanning, stream]);
+
+    const refreshOrder = () => {
+        if(!orderId) return;
+        getOrder(orderId).then(((res) => setOrder(res.data)))
     };
 
     useEffect(() => {
-        const getAvailableCameras = async () => {
-            const devices = await navigator.mediaDevices.enumerateDevices();
-            const videoDevices = devices.filter((device) => device.kind === "videoinput");
-            setAvailableDevices(videoDevices);
+        if(!(barcode && orderId)) return;
 
-            // Use the first camera by default
-            if (videoDevices.length > 0) {
-                setCurrentDeviceId(videoDevices[0].deviceId);
-                startCamera(videoDevices[0].deviceId);
-            }
-        };
+        addReelToOrder({
+            orderId: orderId,
+            reelId: barcode
+        }).then(() => refreshOrder());
 
-        getAvailableCameras();
+    }, [barcode, orderId])
 
-        return () => {
-            // Cleanup: Stop all tracks when the component is unmounted
-            if (videoRef.current?.srcObject) {
-                const tracks = videoRef.current.srcObject.getTracks();
-                tracks.forEach((track) => track.stop());
-            }
-        };
+    useEffect(() => {
+        startCamera();
+        refreshOrder();
+        return () => stopCamera(); 
     }, []);
 
-    const switchCamera = () => {
-        const currentIndex = availableDevices.findIndex((device) => device.deviceId === currentDeviceId);
-        const nextIndex = (currentIndex + 1) % availableDevices.length;
-        const nextDevice = availableDevices[nextIndex];
-
-        setCurrentDeviceId(nextDevice.deviceId);
-
-        if (videoRef.current?.srcObject) {
-            // Stop the current video stream
-            const tracks = videoRef.current.srcObject.getTracks();
-            tracks.forEach((track) => track.stop());
+    useEffect(() => {
+        const visibilityChangeHandler = () => {
+            if (document.hidden) {    
+                stopCamera();
+            } else {
+                startCamera();
+            }
         }
 
-        // Start the next camera
-        startCamera(nextDevice.deviceId);
-    };
+        document.addEventListener("visibilitychange", visibilityChangeHandler);
+
+        return () => {
+            document.removeEventListener("visibilitychange", visibilityChangeHandler)
+        }
+    }, [startCamera, stopCamera])
 
     return (
         <div>
-            <h1>Order ID: {orderId}</h1>
-            <div>
-                {scannedCode ? (
-                    <p>Scanned QR Code: {scannedCode}</p>
-                ) : (
-                    <p>Scanning for QR Code...</p>
-                )}
+            <div style={{ display: "flex", alignItems: 'center', flexDirection: 'column', margin: '1rem' }}>
+                <video ref={videoRef} autoPlay playsInline style={{ width: "80%", height: "auto", borderRadius: '12px', marginBottom: '1rem' }} />
+                {barcode && <p>Scanned Code: {barcode}</p>}
+                <div style={{width: '100%'}}>
+                    {order && <OrderDisplay order={order} />}
+                </div>
             </div>
-            <video ref={videoRef} autoPlay playsInline style={{ width: "80vw", height: "auto" }} />
-            {availableDevices.length > 1 && (
-                <button onClick={switchCamera}>Switch Camera</button>
-            )}
         </div>
     );
 };

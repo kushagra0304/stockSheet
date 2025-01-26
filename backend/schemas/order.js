@@ -13,7 +13,7 @@ const orderReelGroup = new mongoose.Schema({
 // order id is created by mongoose when we save a document
 const orderSchema = new mongoose.Schema({
     customerName: { type: String, required: true },
-    orderReelGroups: [{ type: orderReelGroup, required: true }],
+    orderReelGroups: { type: [orderReelGroup], required: true },
     date: { type: Date, default: Date.now, required: true },
     active: { type: Boolean, index: true, sparse: true }
 });

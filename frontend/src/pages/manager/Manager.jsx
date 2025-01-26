@@ -49,14 +49,14 @@ const Manager = () => {
         });
     }, []); 
 
-    const handleNavigate = () => {
-        navigate('./order/id');
+    const handleNavigate = (id) => {
+        navigate(`./order/${id}`);
     };
 
     return (
         <div id="orders"> 
             <div id="ordersDisplay">
-                {orders.map((order) => <div onClick={handleNavigate}><OrderComponent order={order}/></div>)}
+                {orders.map((order) => <div onClick={() => handleNavigate(order.id)}><OrderComponent order={order}/></div>)}
             </div>
         </div>
     )

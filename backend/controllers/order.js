@@ -37,6 +37,17 @@ router.get('/:orderType', async (request, response) => {
     response.send(orders);
 });
 
+router.get('/single/:id', async (request, response) => {
+    const { id } = request.params;
+
+    const order = await orderModel.findById(id).populate({
+        path: 'orderReelGroups.reels',
+        model: 'Reel'
+    });
+
+    response.send(order);
+});
+
 router.post('', async (request, response) => {
     const { body } = request;
 
