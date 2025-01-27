@@ -1,7 +1,7 @@
 import { useCallback, useEffect, useRef, useState } from "react";
 import { useParams } from "react-router";
 import OrderDisplay from "../../components/OrderDisplay";
-import { addReelToOrder, getOrder } from "../../services/order";
+import { addReelToOrder, getOrder, dispatchOrder } from "../../services/order";
 
 const getStream = async () => {
     return await navigator.mediaDevices.getUserMedia({
@@ -111,12 +111,13 @@ const Order = () => {
 
     return (
         <div>
-            <div style={{ display: "flex", alignItems: 'center', flexDirection: 'column', margin: '1rem' }}>
+            <div style={{ display: "flex", gap: '1rem', alignItems: 'center', flexDirection: 'column', margin: '1rem' }}>
                 <video ref={videoRef} autoPlay playsInline style={{ width: "80%", height: "auto", borderRadius: '12px', marginBottom: '1rem' }} />
                 {barcode && <p>Scanned Code: {barcode}</p>}
                 <div style={{width: '100%'}}>
                     {order && <OrderDisplay order={order} />}
                 </div>
+                <button onClick={() => dispatchOrder(orderId)} style={{ width: '100%', height: '3rem' }}>Dispatch</button>
             </div>
         </div>
     );

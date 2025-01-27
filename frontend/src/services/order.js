@@ -18,6 +18,15 @@ export const getOrders = async (orderType) => {
     }
 }
 
+export const dispatchOrder = async (orderId) => {
+    try {
+        return await axios.post(`/api/order/dispatch/${orderId}`);
+    } catch (error) {
+        console.log(error);
+        console.log("Error connecting to server")
+    }
+}
+
 export const getOrder = async (orderId) => {
     try {
         return await axios.get(`/api/order/single/${orderId}`);

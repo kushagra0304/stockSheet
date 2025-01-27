@@ -14,9 +14,8 @@ const reelSchema = new mongoose.Schema({
     date: { type: Date, required: true, default: Date.now },
     status: { 
       type: String,
-      enum: ['sold', 'active'],
+      enum: ['inStock', 'active'],
       index: true,
-      sparse: true
    },
     // ----------------------------
     // Sold fields

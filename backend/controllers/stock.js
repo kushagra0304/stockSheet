@@ -5,7 +5,7 @@ const router = require('express').Router();
 
 router.get('', async (request, response) => {
     try {
-        response.json(await reelModel.find({ status: { $exists: false } }).exec())
+        response.json(await reelModel.find({ status: 'inStock' }).exec())
     } catch(e) {
         response.status(500).send()
     }
@@ -14,7 +14,7 @@ router.get('', async (request, response) => {
 router.get('/reelGroup', async (request, response) => {
     const keyPropertyOrder = ['gsm', 'size', 'shade', 'bf'];
 
-    const reels = await reelModel.find({ status: { $exists: false } }).exec();
+    const reels = await reelModel.find({ status: 'inStock' }).exec();
 
     const grouped = {};
 

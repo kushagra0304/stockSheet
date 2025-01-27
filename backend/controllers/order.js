@@ -60,6 +60,55 @@ router.post('', async (request, response) => {
     response.send(createdOrder);
 });
 
+router.post('/dispatch/:id', async (request, response) => {
+    const session = await mongoose.startSession();
+    session.startTransaction();
+
+    try {
+        const { id } = request.params;
+
+        const order = await orderModel.findById(id);
+
+        const orderReelGroups = order.orderReelGroups;
+
+        for(let i = 0; i < orderReelGroups.length; i++) {
+            const orderReelGroup = orderReelGroups[i];
+            if(orderReelGroup.qty != orderReelGroup.reels.length) {
+                response.send("Order Incomplete");
+                return;
+            }
+        }
+
+        for (let i = 0; i < order.orderReelGroups.length; i++) {
+            const orderReelGroup = order.orderReelGroups[i];
+        
+            for (let j = 0; j < orderReelGroup.reels.length; j++) {
+                const id = orderReelGroup.reels[j];
+        
+                const reel = await reelModel.findById(id);
+                reel.soldTo = order.customerName;
+                reel.soldDate = new Date();
+                reel.soldRate = orderReelGroup.rate;
+                reel.status = undefined;
+
+                await reel.save();
+            }
+        }
+        
+
+        order.active = undefined;
+        await order.save();
+
+        await session.commitTransaction(); 
+        response.send();
+    } catch(err) {
+        await session.abortTransaction();
+        throw new Error("Error saving order");
+    }
+
+    session.endSession();
+});
+
 router.post('/addReel', async (request, response) => {
     const { body } = request;
     
@@ -74,7 +123,7 @@ router.post('/addReel', async (request, response) => {
     let success = false;
 
     order.orderReelGroups.forEach((group) => {
-        if(`${group.gsm}.${group.size}.${group.shade}.${group.bf}` === `${reel.gsm}.${reel.size}.${reel.shade}.${reel.bf}`) {
+        if((group.reels.length < group.qty) && `${group.gsm}.${group.size}.${group.shade}.${group.bf}` === `${reel.gsm}.${reel.size}.${reel.shade}.${reel.bf}`) {
             success = true;
             group.reels.push(reel.id);
             reel.status = 'active';
@@ -96,7 +145,7 @@ router.post('/addReel', async (request, response) => {
             throw error;
         }
     } else {
-        throw new Error("Reel not found in the order");
+        throw new Error("Reel not found in the order or reel group full");
     }
     
     session.endSession();
